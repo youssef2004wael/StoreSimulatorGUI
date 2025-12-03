@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Core Models and Logic -->
+    <Compile Include="Models.fs" />
+    <Compile Include="Catalog.fs" />
+    <Compile Include="Search.fs" />
+    <Compile Include="Cart.fs" />
+    <Compile Include="PriceCalculator.fs" />
+    <Compile Include="FileOperations.fs" />
+    
+    <!-- ViewModels -->
+    <Compile Include="ViewModels\MainViewModel.fs" />
+    
+    <!-- Views -->
+    <Compile Include="Views\MainWindow.axaml.fs">
+      <DependentUpon>MainWindow.axaml</DependentUpon>
+    </Compile>
+    
+    <!-- App -->
+    <Compile Include="App.axaml.fs">
+      <DependentUpon>App.axaml</DependentUpon>
+    </Compile>
+    
+    <!-- Entry Point (must be last) -->
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.8" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.8" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.8" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.8" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.8" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.3.8" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+</Project>

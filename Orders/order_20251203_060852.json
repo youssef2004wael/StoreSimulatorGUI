@@ -1,0 +1,20 @@
+{
+  "OrderId": "5105ae5e-e4aa-469b-82ed-8e573869db55",
+  "OrderDate": "2025-12-03T06:08:52.6014121+02:00",
+  "Items": [
+    {
+      "Product": {
+        "Id": 2,
+        "Name": "Mouse",
+        "Description": "Wireless ergonomic mouse",
+        "Price": 29.99,
+        "Category": "Electronics",
+        "Stock": 48
+      },
+      "Quantity": 40
+    }
+  ],
+  "Subtotal": 1199.60,
+  "Discount": 179.9400,
+  "Total": 1019.6600
+}

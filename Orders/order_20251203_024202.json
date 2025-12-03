@@ -1,0 +1,59 @@
+{
+  "OrderId": "f0792f69-154e-46bd-8559-21cb5019a863",
+  "OrderDate": "2025-12-03T02:42:02.7328117+02:00",
+  "Items": [
+    {
+      "Product": {
+        "Id": 15,
+        "Name": "Water Bottle",
+        "Description": "Stainless steel water bottle 32oz",
+        "Price": 22.99,
+        "Category": "Kitchen",
+        "Stock": 50
+      },
+      "Quantity": 1
+    },
+    {
+      "Product": {
+        "Id": 7,
+        "Name": "Desk Lamp",
+        "Description": "LED desk lamp with adjustable brightness",
+        "Price": 49.99,
+        "Category": "Furniture",
+        "Stock": 40
+      },
+      "Quantity": 1
+    },
+    {
+      "Product": {
+        "Id": 6,
+        "Name": "Desk Chair",
+        "Description": "Ergonomic office chair with lumbar support",
+        "Price": 299.99,
+        "Category": "Furniture",
+        "Stock": 20
+      },
+      "Quantity": 1
+    },
+    {
+      "Product": {
+        "Id": 4,
+        "Name": "Monitor",
+        "Description": "27-inch 4K IPS monitor",
+        "Price": 399.99,
+        "Category": "Electronics",
+        "Stock": 15
+      },
+      "Quantity": 1
+    }
+  ],
+  "Subtotal": 772.96,
+  "Discount": 193.2400,
+  "Total": 579.7200,
+  "CouponUsed": {
+    "Case": "Some",
+    "Fields": [
+      "SAVE25"
+    ]
+  }
+}

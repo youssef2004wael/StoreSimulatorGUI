@@ -1,0 +1,48 @@
+{
+  "OrderId": "c9ee1209-b4fb-4e9f-8184-4c446a0418da",
+  "OrderDate": "2025-12-03T06:06:29.0102159+02:00",
+  "Items": [
+    {
+      "Product": {
+        "Id": 3,
+        "Name": "Keyboard",
+        "Description": "Mechanical RGB keyboard",
+        "Price": 79.99,
+        "Category": "Electronics",
+        "Stock": 30
+      },
+      "Quantity": 1
+    },
+    {
+      "Product": {
+        "Id": 1,
+        "Name": "Laptop",
+        "Description": "High-performance laptop with 16GB RAM",
+        "Price": 999.99,
+        "Category": "Electronics",
+        "Stock": 10
+      },
+      "Quantity": 1
+    },
+    {
+      "Product": {
+        "Id": 2,
+        "Name": "Mouse",
+        "Description": "Wireless ergonomic mouse",
+        "Price": 29.99,
+        "Category": "Electronics",
+        "Stock": 50
+      },
+      "Quantity": 2
+    }
+  ],
+  "Subtotal": 1139.96,
+  "Discount": 113.996,
+  "Total": 1025.964,
+  "CouponUsed": {
+    "Case": "Some",
+    "Fields": [
+      "SAVE10"
+    ]
+  }
+}

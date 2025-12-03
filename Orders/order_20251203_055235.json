@@ -1,0 +1,26 @@
+{
+  "OrderId": "87cbfe8f-8947-465d-beba-5f941b5de054",
+  "OrderDate": "2025-12-03T05:52:35.7464949+02:00",
+  "Items": [
+    {
+      "Product": {
+        "Id": 9,
+        "Name": "Webcam",
+        "Description": "1080p HD webcam with microphone",
+        "Price": 89.99,
+        "Category": "Electronics",
+        "Stock": 35
+      },
+      "Quantity": 6
+    }
+  ],
+  "Subtotal": 539.94,
+  "Discount": 53.994,
+  "Total": 485.946,
+  "CouponUsed": {
+    "Case": "Some",
+    "Fields": [
+      "SAVE10"
+    ]
+  }
+}

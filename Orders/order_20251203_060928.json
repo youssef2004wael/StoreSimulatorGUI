@@ -1,0 +1,31 @@
+{
+  "OrderId": "0808caee-cf40-4f67-8c95-bd6d8e8d9ff0",
+  "OrderDate": "2025-12-03T06:09:28.0205137+02:00",
+  "Items": [
+    {
+      "Product": {
+        "Id": 3,
+        "Name": "Keyboard",
+        "Description": "Mechanical RGB keyboard",
+        "Price": 79.99,
+        "Category": "Electronics",
+        "Stock": 1
+      },
+      "Quantity": 1
+    },
+    {
+      "Product": {
+        "Id": 1,
+        "Name": "Laptop",
+        "Description": "High-performance laptop with 16GB RAM",
+        "Price": 999.99,
+        "Category": "Electronics",
+        "Stock": 9
+      },
+      "Quantity": 1
+    }
+  ],
+  "Subtotal": 1079.98,
+  "Discount": 161.9970,
+  "Total": 917.9830
+}
