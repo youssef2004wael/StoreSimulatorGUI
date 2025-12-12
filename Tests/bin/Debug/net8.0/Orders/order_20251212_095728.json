@@ -1,0 +1,37 @@
+{
+  "OrderId": "6b50a9b0-ad33-467a-987f-c5b52076c140",
+  "OrderDate": "2025-12-12T09:57:28.4540964+02:00",
+  "Items": [
+    {
+      "Product": {
+        "Id": 2,
+        "Name": "Mouse",
+        "Description": "Wireless ergonomic mouse",
+        "Price": 29.99,
+        "Category": "Electronics",
+        "Stock": 50
+      },
+      "Quantity": 3
+    },
+    {
+      "Product": {
+        "Id": 1,
+        "Name": "Laptop",
+        "Description": "High-performance laptop with 16GB RAM",
+        "Price": 999.99,
+        "Category": "Electronics",
+        "Stock": 10
+      },
+      "Quantity": 2
+    }
+  ],
+  "Subtotal": 2089.95,
+  "Discount": 208.995,
+  "Total": 1880.955,
+  "CouponUsed": {
+    "Case": "Some",
+    "Fields": [
+      "SAVE10"
+    ]
+  }
+}

@@ -91,3 +91,4 @@ E:\StoreSimulatorGUI\obj\Debug\net8.0\refint\StoreSimulatorGUI.dll
 E:\StoreSimulatorGUI\obj\Debug\net8.0\StoreSimulatorGUI.pdb
 E:\StoreSimulatorGUI\obj\Debug\net8.0\StoreSimulatorGUI.genruntimeconfig.cache
 E:\StoreSimulatorGUI\obj\Debug\net8.0\ref\StoreSimulatorGUI.dll
+E:\StoreSimulatorGUI\obj\Debug\net8.0\StoreSimulatorGUI.sourcelink.json

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<linker>
+  <assembly fullname="StoreSimulatorGUI.Tests">
+    <resource name="FSharpSignatureData.StoreSimulatorGUI.Tests" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedData.StoreSimulatorGUI.Tests" action="remove"></resource>
+    <resource name="FSharpSignatureDataB.StoreSimulatorGUI.Tests" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedDataB.StoreSimulatorGUI.Tests" action="remove"></resource>
+    <resource name="FSharpOptimizationData.StoreSimulatorGUI.Tests" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedData.StoreSimulatorGUI.Tests" action="remove"></resource>
+    <resource name="FSharpOptimizationDataB.StoreSimulatorGUI.Tests" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedDataB.StoreSimulatorGUI.Tests" action="remove"></resource>
+    <resource name="FSharpOptimizationInfo.StoreSimulatorGUI.Tests" action="remove"></resource>
+    <resource name="FSharpSignatureInfo.StoreSimulatorGUI.Tests" action="remove"></resource>
+  </assembly>
+</linker>

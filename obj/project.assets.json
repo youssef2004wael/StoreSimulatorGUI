@@ -359,7 +359,7 @@
           }
         }
       },
-      "FSharp.Core/10.0.100": {
+      "FSharp.Core/10.0.101": {
         "type": "package",
         "compile": {
           "lib/netstandard2.1/FSharp.Core.dll": {
@@ -1216,15 +1216,15 @@
         "logo.png"
       ]
     },
-    "FSharp.Core/10.0.100": {
-      "sha512": "c/r6T/HE9MWL0O0OispLtaKhVwDsiYQlLS249LoxSo1HNH/wfc0f5DE4pI6WpTXkCEdeXa66K5f9FmKLr/0cmw==",
+    "FSharp.Core/10.0.101": {
+      "sha512": "mrS3J7cLtvXM3u3CmiaFq8oyBdlevzZY1VAAAbFk1gUDQtDEjUOybN5XpQglx5wAgJ0wLdDl6OSSfS7ZDFNcpA==",
       "type": "package",
-      "path": "fsharp.core/10.0.100",
+      "path": "fsharp.core/10.0.101",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "Icon.png",
-        "fsharp.core.10.0.100.nupkg.sha512",
+        "fsharp.core.10.0.101.nupkg.sha512",
         "fsharp.core.nuspec",
         "lib/netstandard2.0/FSharp.Core.dll",
         "lib/netstandard2.0/FSharp.Core.xml",
@@ -1868,7 +1868,7 @@
       "Avalonia.Fonts.Inter >= 11.3.8",
       "Avalonia.ReactiveUI >= 11.3.8",
       "Avalonia.Themes.Fluent >= 11.3.8",
-      "FSharp.Core >= 10.0.100",
+      "FSharp.Core >= 10.0.101",
       "Newtonsoft.Json >= 13.0.3"
     ]
   },
@@ -1891,7 +1891,7 @@
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files\\dotnet\\sdk\\10.0.100\\FSharp\\library-packs": {},
+        "C:\\Program Files\\dotnet\\sdk\\10.0.101\\FSharp\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -1944,7 +1944,7 @@
           "FSharp.Core": {
             "include": "Runtime, Compile, Build, Native, Analyzers, BuildTransitive",
             "target": "Package",
-            "version": "[10.0.100, )",
+            "version": "[10.0.101, )",
             "generatePathProperty": true
           },
           "Newtonsoft.Json": {
@@ -1987,7 +1987,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

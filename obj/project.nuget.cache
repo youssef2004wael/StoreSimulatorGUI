@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "1G9bC3GcoJc=",
+  "dgSpecHash": "pVbGaH8+c8I=",
   "success": true,
   "projectFilePath": "E:\\StoreSimulatorGUI\\StoreSimulatorGUI.fsproj",
   "expectedPackageFiles": [
@@ -21,7 +21,7 @@
     "C:\\Users\\user\\.nuget\\packages\\avalonia.win32\\11.3.8\\avalonia.win32.11.3.8.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\avalonia.x11\\11.3.8\\avalonia.x11.11.3.8.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\dynamicdata\\8.4.1\\dynamicdata.8.4.1.nupkg.sha512",
-    "C:\\Users\\user\\.nuget\\packages\\fsharp.core\\10.0.100\\fsharp.core.10.0.100.nupkg.sha512",
+    "C:\\Users\\user\\.nuget\\packages\\fsharp.core\\10.0.101\\fsharp.core.10.0.101.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\harfbuzzsharp\\8.3.1.1\\harfbuzzsharp.8.3.1.1.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\harfbuzzsharp.nativeassets.linux\\8.3.1.1\\harfbuzzsharp.nativeassets.linux.8.3.1.1.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\harfbuzzsharp.nativeassets.macos\\8.3.1.1\\harfbuzzsharp.nativeassets.macos.8.3.1.1.nupkg.sha512",

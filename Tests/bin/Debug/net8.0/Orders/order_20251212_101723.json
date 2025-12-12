@@ -1,0 +1,20 @@
+{
+  "OrderId": "e7681cfa-78b5-4633-a14d-8e55001946cf",
+  "OrderDate": "2025-12-12T10:17:23.7208065+02:00",
+  "Items": [
+    {
+      "Product": {
+        "Id": 1,
+        "Name": "Test Product",
+        "Description": "Test Description",
+        "Price": 100.00,
+        "Category": "Test",
+        "Stock": 10
+      },
+      "Quantity": 2
+    }
+  ],
+  "Subtotal": 0.0,
+  "Discount": 0.0,
+  "Total": 0.0
+}

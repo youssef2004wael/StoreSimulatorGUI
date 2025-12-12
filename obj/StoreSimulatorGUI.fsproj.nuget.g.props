@@ -19,7 +19,7 @@
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <PkgNewtonsoft_Json Condition=" '$(PkgNewtonsoft_Json)' == '' ">C:\Users\user\.nuget\packages\newtonsoft.json\13.0.3</PkgNewtonsoft_Json>
-    <PkgFSharp_Core Condition=" '$(PkgFSharp_Core)' == '' ">C:\Users\user\.nuget\packages\fsharp.core\10.0.100</PkgFSharp_Core>
+    <PkgFSharp_Core Condition=" '$(PkgFSharp_Core)' == '' ">C:\Users\user\.nuget\packages\fsharp.core\10.0.101</PkgFSharp_Core>
     <PkgAvalonia_BuildServices Condition=" '$(PkgAvalonia_BuildServices)' == '' ">C:\Users\user\.nuget\packages\avalonia.buildservices\11.3.1</PkgAvalonia_BuildServices>
     <PkgAvalonia Condition=" '$(PkgAvalonia)' == '' ">C:\Users\user\.nuget\packages\avalonia\11.3.8</PkgAvalonia>
     <PkgAvalonia_Themes_Fluent Condition=" '$(PkgAvalonia_Themes_Fluent)' == '' ">C:\Users\user\.nuget\packages\avalonia.themes.fluent\11.3.8</PkgAvalonia_Themes_Fluent>

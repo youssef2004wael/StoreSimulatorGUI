@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>
+<w:p><w:r><w:t xml:space='preserve'># StoreSimulatorGUI â€“ Project Documentation</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'></w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>## Overview</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Desktop shopping simulator written in F# with Avalonia 11 (Fluent theme).</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Implements a simple store experience: browse products, search/filter, manage a cart, apply discounts/coupons, and check out. Orders are saved to JSON; catalog export helpers are included.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Architectural style: MVVM. Views are XAML, ViewModels expose observable collections and commands, domain logic lives in standalone modules.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'></w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>## Solution Structure</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- `Program.fs` â€“ entry point; builds Avalonia app and starts the desktop lifetime.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- `App.axaml`/`App.axaml.fs` â€“ loads styles and creates `MainWindow`.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- `Views/MainWindow.axaml`(+`.fs`) â€“ UI layout and DataContext wiring to `MainViewModel`.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- `ViewModels/MainViewModel.fs` â€“ orchestration layer; exposes products, cart items, commands, and status text.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Domain modules:</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - `Models.fs` â€“ product, cart, discount, order, and filter types.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - `Catalog.fs` â€“ in-memory product catalog CRUD and stock helpers.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - `Search.fs` â€“ product filtering, search, and sorting.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - `Cart.fs` â€“ immutable cart operations (add/remove/update/merge) and summaries.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - `PriceCalculator.fs` â€“ subtotal/discount/coupon logic, totals, tax/shipping helpers.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - `FileOperations.fs` â€“ JSON persistence for orders/catalog and text/CSV export.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Tests in `Tests/` target core modules and integration.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'></w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>## Data Model (from `Models.fs`)</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- `Product` includes `Id`, `Name`, `Description`, `Price`, `Category`, `Stock`.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- `CartItem` wraps a `Product` and `Quantity`.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- `Cart` tracks `Items`, totals (`TotalBeforeDiscount`, `Discount`, `FinalTotal`) and optional `AppliedCoupon`.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- `DiscountRule`: `PercentageOff`, `FixedAmountOff`, `BuyXGetY`, or `NoDiscount`.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- `OrderSummary` snapshot saved on checkout.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- `FilterCriteria` supports category/price/search/stock filters.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'></w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>## Key Behaviors</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Catalog initialization seeds 15 sample products into a `Map&lt;int, Product&gt;`. Utility helpers support stock updates, price changes, removal, and reporting (low/out-of-stock).</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Cart workflow is immutable: `addToCart`, `updateQuantity`, `increment/decrement`, `removeFromCart`, `mergeCarts`, `clearCart`. Stock limits are enforced on add/update.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Pricing &amp; discounts:</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - Subtotal is sum of line items.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - Automatic discounts: 5% at â‰¥$200, 10% at â‰¥$500, 15% at â‰¥$1000.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - Coupon codes: `SAVE10`, `SAVE20` (min $100), `SAVE25` (min $200), `FLAT50`, `FLAT100` (min $500), `WELCOME15`.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - `calculateTotal` applies auto discounts; `applyCouponToCart` stores the coupon and recalculates. `recalculateCart` preserves existing coupons.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - Helpers compute savings %, tax, shipping (free when `FinalTotal` â‰¥ threshold), and compose detailed summaries.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Search/filter: name/description search, category filter, price ranges, stock-only toggle, sorting by price/name/stock.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Checkout flow (in `MainViewModel.CheckoutExecute`):</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - Decreases catalog stock for purchased items.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - Saves an `OrderSummary` JSON file to `Orders/order_yyyyMMdd_HHmmss.json`.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - Clears cart and refreshes UI collections; status message communicates outcome.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Persistence &amp; export:</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - Orders and catalog saved/loaded via Newtonsoft.Json with indented formatting.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - Export helpers: cart to text, catalog to CSV, backup orders to another directory, list/delete orders, compute total sales.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'></w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>## UI Overview (Avalonia, `MainWindow.axaml`)</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Header with app title and tagline.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Left pane: search box + category combo; product list rendered as modern cards; quantity selector and Add-to-cart button.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Right pane: cart list with per-item remove, coupon section (apply/remove), totals panel (subtotal, discount, total), checkout and clear-cart buttons.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Status bar displays the latest status message from the ViewModel.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'></w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>## ViewModel Highlights</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Observable collections: `Products`, `CartItems`, `Categories`.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- State: selected product, quantity, coupon code, search text, selected category, status message, and backing `catalog`/`cart` models.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Commands: Add to cart, Clear cart, Apply/Remove coupon, Checkout, Remove cart item.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- `FilterProducts` reacts to search/category changes to rebuild the product list.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- `UpdateCart` recalculates totals, repopulates cart items, and raises property change notifications for bound fields.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'></w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>## Building &amp; Running</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Prereqs: .NET 8 SDK.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Restore/build/run from repo root:</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - `dotnet restore`</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>  - `dotnet run`</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Tests (if desired): `dotnet test` (uses `Tests/StoreSimulatorGUI.Tests.fsproj`).</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'></w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>## Data &amp; Files</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Orders: saved under `Orders/` (auto-created). Filenames: `order_YYYYMMDD_HHMMSS.json`.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Catalog: default seed is in code; helpers exist to save/load a JSON catalog under `Catalog/catalog.json`.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Assets: `Assets/avalonia-logo.ico` (app icon).</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'></w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>## Extension Ideas</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Add persistent user settings (currency, tax rate, shipping threshold).</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Implement real Buy X Get Y discounts in `applyDiscount`.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Add quantity editing directly in the cart UI.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Provide import-from-CSV for catalog updates.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'>- Integrate notifications/toasts for status instead of status bar text.</w:t></w:r></w:p>
+<w:p><w:r><w:t xml:space='preserve'></w:t></w:r></w:p>
+<w:p/>
+    <w:sectPr>
+      <w:pgSz w:w="12240" w:h="15840"/>
+      <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/>
+    </w:sectPr>
+  </w:body>
+</w:document>

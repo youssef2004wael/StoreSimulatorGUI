@@ -57,6 +57,20 @@ let sortProducts (products: Product list) (sortBy: SortBy) : Product list =
     | StockAsc -> products |> List.sortBy (fun p -> p.Stock)
     | StockDesc -> products |> List.sortByDescending (fun p -> p.Stock)
 
+// Sort by price (simple version for compatibility with tests)
+let sortByPrice (products: Product list) (ascending: bool) : Product list =
+    if ascending then
+        sortProducts products PriceAsc
+    else
+        sortProducts products PriceDesc
+
+// Sort by name (simple version for compatibility with tests)
+let sortByName (products: Product list) (ascending: bool) : Product list =
+    if ascending then
+        sortProducts products NameAsc
+    else
+        sortProducts products NameDesc
+
 // Get unique categories
 let getCategories (products: Product list) : string list =
     products 
@@ -99,6 +113,22 @@ let filterProducts (products: Product list) (criteria: FilterCriteria) : Product
         filterInStock filtered
     else
         filtered
+
+// Search products with optional filters (for ViewModel compatibility)
+let searchProducts (products: Product list) (searchTerm: string option) (category: string option) : Product list =
+    let mutable result = products
+    
+    match searchTerm with
+    | Some term when not (System.String.IsNullOrWhiteSpace(term)) ->
+        result <- searchByName result term
+    | _ -> ()
+    
+    match category with
+    | Some cat when not (System.String.IsNullOrWhiteSpace(cat)) && cat <> "All" ->
+        result <- filterByCategory result cat
+    | _ -> ()
+    
+    result
 
 // Get price statistics
 let getPriceStatistics (products: Product list) : decimal * decimal * decimal =
