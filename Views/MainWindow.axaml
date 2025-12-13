@@ -21,7 +21,12 @@
         <!-- Modern Header with Gradient -->
         <Border Grid.Row="0" Background="#6366F1" Padding="25,20">
             <Grid>
-                <StackPanel VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
                     <TextBlock Text="🛒 F# Store Simulator" 
                               FontSize="32" 
                               FontWeight="Bold" 
@@ -31,357 +36,808 @@
                               Foreground="#E0E7FF"
                               Margin="0,8,0,0"/>
                 </StackPanel>
+                
+                <!-- NEW: Load Orders Button in Header -->
+                <Button Grid.Column="1"
+                        Content="📋 Order History"
+                        Command="{Binding LoadOrdersCommand}"
+                        Background="#4F46E5"
+                        Foreground="White"
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Padding="20,12"
+                        CornerRadius="8"
+                        BorderThickness="2"
+                        BorderBrush="#818CF8"
+                        VerticalAlignment="Center">
+                    <Button.Styles>
+                        <Style Selector="Button:pointerover">
+                            <Setter Property="Background" Value="#4338CA"/>
+                        </Style>
+                    </Button.Styles>
+                </Button>
             </Grid>
         </Border>
 
-        <!-- Main Content -->
-        <Grid Grid.Row="1" Margin="20">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
+        <!-- Main Content Area -->
+        <Grid Grid.Row="1">
+            
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- MAIN STORE VIEW (visible when order history is hidden) -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <Grid Margin="20" IsVisible="{Binding IsOrderHistoryHidden}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
 
-            <!-- Left Panel: Products -->
-            <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+                <!-- Left Panel: Products -->
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <!-- Modern Search Bar -->
-                <Border Grid.Row="0" 
-                       Background="rgba(70, 179, 49, 0)" 
-                       Padding="20" 
-                       CornerRadius="12"
-                       Margin="0,0,0,15"
-                       BoxShadow="0 2 8 0 #206366F1">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="15"/>
-                            <ColumnDefinition Width="220"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBox Grid.Column="0"
-                                Text="{Binding SearchText}"
-                                Watermark="🔍 Search products by name..."
-                                Height="40"
-                                VerticalContentAlignment="Center"
-                                FontSize="14"
-                                Background="#206366F1"
-                                BorderBrush="#0b0b0bff"
-                                BorderThickness="1"
-                                CornerRadius="8"/>
-
-                        <ComboBox Grid.Column="2"
-                                 ItemsSource="{Binding Categories}"
-                                 SelectedItem="{Binding SelectedCategory}"
-                                 Height="40"
-                                 FontSize="14"
-                                 Background="#6a3004ff"
-                                 BorderBrush="#E5E7EB"
-                                 BorderThickness="1"
-                                 CornerRadius="8"/>
-                    </Grid>
-                </Border>
-
-                <!-- Products List with Modern Cards -->
-                <Border Grid.Row="1" 
-                       Background="White" 
-                       BorderBrush="#E5E7EB" 
-                       BorderThickness="1" 
-                       CornerRadius="12"
-                       BoxShadow="0 2 8 0 #10000000">
-                    <ListBox ItemsSource="{Binding Products}"
-                            SelectedItem="{Binding SelectedProduct}"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Padding="10">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border Background="#FAFBFC" 
-                                       Margin="5" 
-                                       Padding="20" 
-                                       CornerRadius="10"
-                                       BorderBrush="#E5E7EB"
-                                       BorderThickness="1">
-                                    <Border.Styles>
-                                        <Style Selector="Border:pointerover">
-                                            <Setter Property="Background" Value="#F0F4FF"/>
-                                            <Setter Property="BorderBrush" Value="#6366F1"/>
-                                        </Style>
-                                    </Border.Styles>
-                                    
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Name}" 
-                                                      FontSize="18" 
-                                                      FontWeight="Bold"
-                                                      Foreground="#1F2937"/>
-                                            <TextBlock Text="{Binding Description}" 
-                                                      FontSize="13" 
-                                                      Foreground="#6B7280"
-                                                      Margin="0,6,0,8"
-                                                      TextWrapping="Wrap"/>
-                                            <TextBlock Text="{Binding PriceFormatted}" 
-                                                      FontSize="22" 
-                                                      FontWeight="Bold"
-                                                      Foreground="#10B981"/>
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="1" 
-                                                   VerticalAlignment="Center"
-                                                   Margin="20,0,0,0">
-                                            <Border Background="#2250abff"
-                                                   CornerRadius="8"
-                                                   Padding="12,8"
-                                                   Margin="0,0,0,8">
-                                                <TextBlock Text="{Binding Category}" 
-                                                          FontSize="11" 
-                                                          FontWeight="SemiBold"
-                                                          Foreground="#4B5563"
-                                                          HorizontalAlignment="Center"/>
-                                            </Border>
-                                            <TextBlock Text="{Binding StockInfo}" 
-                                                      FontSize="13"
-                                                      FontWeight="SemiBold"
-                                                      Foreground="{Binding StockColor}"
-                                                      HorizontalAlignment="Center"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Border>
-
-                <!-- Modern Add to Cart Section -->
-                <Border Grid.Row="2" 
-                       Background="#6366F1" 
-                       Padding="20" 
-                       CornerRadius="12" 
-                       Margin="0,15,0,0"
-                       BoxShadow="0 4 12 0 #206366F1">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="15"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="15"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0" 
-                                  Text="Quantity:" 
-                                  VerticalAlignment="Center"
-                                  Foreground="#206366F1"
-                                  FontSize="15"
-                                  FontWeight="SemiBold"/>
-
-                        <NumericUpDown Grid.Column="2"
-                                      Value="{Binding QuantityToAdd}"
-                                      Minimum="1"
-                                      Maximum="100"
-                                      Height="40"
-                                      Background="#b52f72ff"
-                                      BorderBrush="#247536ff"
-                                      BorderThickness="2"
-                                      CornerRadius="8"/>
-
-                        <Button Grid.Column="4"
-                               Content="➕ Add to Cart"
-                               Command="{Binding AddToCartCommand}"
-                               IsEnabled="{Binding CanAddToCart}"
-                               Background="#10B981"
-                               Foreground="White"
-                               FontSize="16"
-                               FontWeight="Bold"
-                               Height="45"
-                               CornerRadius="8"
-                               BorderThickness="0">
-                            <Button.Styles>
-                                <Style Selector="Button:pointerover">
-                                    <Setter Property="Background" Value="#059669"/>
-                                </Style>
-                                <Style Selector="Button:disabled">
-                                    <Setter Property="Background" Value="#9CA3AF"/>
-                                    <Setter Property="Opacity" Value="0.6"/>
-                                </Style>
-                            </Button.Styles>
-                        </Button>
-                    </Grid>
-                </Border>
-            </Grid>
-
-            <!-- Right Panel: Cart -->
-            <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <!-- Modern Cart Header -->
-                <Border Grid.Row="0" 
-                       Background="#8B5CF6" 
-                       Padding="20"
-                       CornerRadius="12 12 0 0"
-                       BoxShadow="0 2 8 0 #208B5CF6">
-                    <StackPanel>
-                        <TextBlock Text="🛒 Shopping Cart" 
-                                  FontSize="22" 
-                                  FontWeight="Bold" 
-                                  Foreground="White"/>
-                        <TextBlock Text="{Binding CartItemCount}" 
-                                  FontSize="13" 
-                                  Foreground="#EDE9FE"
-                                  Margin="0,8,0,0"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- Cart Items -->
-                <Border Grid.Row="1" 
-                       Background="White" 
-                       BorderBrush="#E5E7EB" 
-                       BorderThickness="1 0 1 0">
-                    <ScrollViewer>
-                        <ItemsControl ItemsSource="{Binding CartItems}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Background="#FAFBFC" 
-                                           Margin="12" 
-                                           Padding="15" 
-                                           CornerRadius="10"
-                                           BorderBrush="#E5E7EB"
-                                           BorderThickness="1">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
-
-                                            <TextBlock Grid.Row="0" 
-                                                      Text="{Binding ProductName}" 
-                                                      FontSize="15" 
-                                                      FontWeight="Bold"
-                                                      Foreground="#1F2937"/>
-                                            
-                                            <StackPanel Grid.Row="1" 
-                                                       Orientation="Horizontal" 
-                                                       Margin="0,8,0,10">
-                                                <TextBlock Text="{Binding Quantity}" 
-                                                          FontWeight="SemiBold"
-                                                          Foreground="#4B5563"/>
-                                                <TextBlock Text=" × " Foreground="#9CA3AF"/>
-                                                <TextBlock Text="{Binding Price, StringFormat='${0:F2}'}" 
-                                                          Foreground="#4B5563"/>
-                                                <TextBlock Text=" = " 
-                                                          Foreground="#9CA3AF" 
-                                                          Margin="5,0"/>
-                                                <TextBlock Text="{Binding SubtotalFormatted}" 
-                                                          FontWeight="Bold"
-                                                          FontSize="15"
-                                                          Foreground="#10B981"/>
-                                            </StackPanel>
-
-                                            <Button Grid.Row="2" 
-                                                   Content="🗑️ Remove" 
-                                                   Command="{Binding RemoveCommand}"
-                                                   CommandParameter="{Binding ProductId}"
-                                                   Background="#EF4444"
-                                                   Foreground="White"
-                                                   FontSize="12"
-                                                   Height="32"
-                                                   CornerRadius="6"
-                                                   BorderThickness="0"
-                                                   HorizontalAlignment="Right">
-                                                <Button.Styles>
-                                                    <Style Selector="Button:pointerover">
-                                                        <Setter Property="Background" Value="#DC2626"/>
-                                                    </Style>
-                                                </Button.Styles>
-                                            </Button>
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
-                </Border>
-
-                <!-- Modern Coupon Section -->
-                <Border Grid.Row="2" 
-                       Background="#F59E0B" 
-                       Padding="15" 
-                       BorderBrush="#E5E7EB"
-                       BorderThickness="1 0 1 1">
-                    <StackPanel>
-                        <TextBlock Text="🎟️ Promo Code" 
-                                  FontWeight="Bold" 
-                                  FontSize="14"
-                                  Foreground="White"
-                                  Margin="0,0,0,10"/>
-                        
+                    <!-- Search Bar -->
+                    <Border Grid.Row="0" 
+                           Background="#41403fff" 
+                           Padding="20" 
+                           CornerRadius="12"
+                           Margin="0,0,0,15"
+                           BoxShadow="0 2 8 0 #10000000">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="8"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="220"/>
                             </Grid.ColumnDefinitions>
 
                             <TextBox Grid.Column="0"
-                                    Text="{Binding CouponCode}"
-                                    Watermark="Enter code"
-                                    Height="36"
-                                    Background="White"
-                                    BorderBrush="#FCD34D"
-                                    BorderThickness="2"
-                                    CornerRadius="6"/>
+                                    Text="{Binding SearchText}"
+                                    Watermark="🔍 Search products by name..."
+                                    Height="40"
+                                    VerticalContentAlignment="Center"
+                                    FontSize="14"
+                                    Background="#41403fff"
+                                    BorderBrush="#E5E7EB"
+                                    BorderThickness="1"
+                                    CornerRadius="8"/>
 
-                            <Button Grid.Column="2"
-                                   Content="Apply"
-                                   Command="{Binding ApplyCouponCommand}"
+                            <ComboBox Grid.Column="2"
+                                     ItemsSource="{Binding Categories}"
+                                     SelectedItem="{Binding SelectedCategory}"
+                                     Height="40"
+                                     FontSize="14"
+                                     Background="White"
+                                     BorderBrush="#E5E7EB"
+                                     BorderThickness="1"
+                                     CornerRadius="8"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Products List -->
+                    <Border Grid.Row="1" 
+                           Background="White" 
+                           BorderBrush="#E5E7EB" 
+                           BorderThickness="1" 
+                           CornerRadius="12"
+                           BoxShadow="0 2 8 0 #10000000">
+                        <ListBox ItemsSource="{Binding Products}"
+                                SelectedItem="{Binding SelectedProduct}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Padding="10">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#FAFBFC" 
+                                           Margin="5" 
+                                           Padding="20" 
+                                           CornerRadius="10"
+                                           BorderBrush="#E5E7EB"
+                                           BorderThickness="1">
+                                        <Border.Styles>
+                                            <Style Selector="Border:pointerover">
+                                                <Setter Property="Background" Value="#F0F4FF"/>
+                                                <Setter Property="BorderBrush" Value="#6366F1"/>
+                                            </Style>
+                                        </Border.Styles>
+                                        
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Name}" 
+                                                          FontSize="18" 
+                                                          FontWeight="Bold"
+                                                          Foreground="#1F2937"/>
+                                                <TextBlock Text="{Binding Description}" 
+                                                          FontSize="13" 
+                                                          Foreground="#6B7280"
+                                                          Margin="0,6,0,8"
+                                                          TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding PriceFormatted}" 
+                                                          FontSize="22" 
+                                                          FontWeight="Bold"
+                                                          Foreground="#10B981"/>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="1" 
+                                                       VerticalAlignment="Center"
+                                                       Margin="20,0,0,0">
+                                                <Border Background="#F3F4F6"
+                                                       CornerRadius="8"
+                                                       Padding="12,8"
+                                                       Margin="0,0,0,8">
+                                                    <TextBlock Text="{Binding Category}" 
+                                                              FontSize="11" 
+                                                              FontWeight="SemiBold"
+                                                              Foreground="#4B5563"
+                                                              HorizontalAlignment="Center"/>
+                                                </Border>
+                                                <TextBlock Text="{Binding StockInfo}" 
+                                                          FontSize="13"
+                                                          FontWeight="SemiBold"
+                                                          Foreground="{Binding StockColor}"
+                                                          HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+
+                    <!-- Add to Cart Section -->
+                    <Border Grid.Row="2" 
+                           Background="#6366F1" 
+                           Padding="20" 
+                           CornerRadius="12" 
+                           Margin="0,15,0,0"
+                           BoxShadow="0 4 12 0 #206366F1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" 
+                                      Text="Quantity:" 
+                                      VerticalAlignment="Center"
+                                      Foreground="#41403fff"
+                                      FontSize="15"
+                                      FontWeight="SemiBold"/>
+
+                            <NumericUpDown Grid.Column="2"
+                                          Value="{Binding QuantityToAdd}"
+                                          Minimum="1"
+                                          Maximum="100"
+                                          Height="40"
+                                          Background="#41403fff"
+                                          CornerRadius="8"/>
+
+                            <Button Grid.Column="4"
+                                   Content="➕ Add to Cart"
+                                   Command="{Binding AddToCartCommand}"
+                                   IsEnabled="{Binding CanAddToCart}"
                                    Background="#10B981"
                                    Foreground="White"
-                                   FontWeight="SemiBold"
-                                   Height="36"
-                                   Width="70"
-                                   CornerRadius="6"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Height="45"
+                                   CornerRadius="8"
                                    BorderThickness="0">
                                 <Button.Styles>
                                     <Style Selector="Button:pointerover">
                                         <Setter Property="Background" Value="#059669"/>
                                     </Style>
+                                    <Style Selector="Button:disabled">
+                                        <Setter Property="Background" Value="#9CA3AF"/>
+                                        <Setter Property="Opacity" Value="0.6"/>
+                                    </Style>
                                 </Button.Styles>
                             </Button>
                         </Grid>
+                    </Border>
+                </Grid>
 
-                        <TextBlock Text="{Binding AppliedCouponText}" 
-                                  FontSize="12" 
-                                  Foreground="White"
-                                  FontWeight="SemiBold"
-                                  Margin="0,8,0,0"
-                                  IsVisible="{Binding HasCoupon}"/>
+                <!-- Right Panel: Cart -->
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Cart Header -->
+                    <Border Grid.Row="0" 
+                           Background="#8B5CF6" 
+                           Padding="20"
+                           CornerRadius="12 12 0 0">
+                        <StackPanel>
+                            <TextBlock Text="🛒 Shopping Cart" 
+                                      FontSize="22" 
+                                      FontWeight="Bold" 
+                                      Foreground="White"/>
+                            <TextBlock Text="{Binding CartItemCount}" 
+                                      FontSize="13" 
+                                      Foreground="#EDE9FE"
+                                      Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Cart Items -->
+                    <Border Grid.Row="1" 
+                           Background="White" 
+                           BorderBrush="#E5E7EB" 
+                           BorderThickness="1 0 1 0">
+                        <ScrollViewer>
+                            <ItemsControl ItemsSource="{Binding CartItems}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#FAFBFC" 
+                                               Margin="12" 
+                                               Padding="15" 
+                                               CornerRadius="10"
+                                               BorderBrush="#E5E7EB"
+                                               BorderThickness="1">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+
+                                                <TextBlock Grid.Row="0" 
+                                                          Text="{Binding ProductName}" 
+                                                          FontSize="15" 
+                                                          FontWeight="Bold"
+                                                          Foreground="#1F2937"/>
+                                                
+                                                <StackPanel Grid.Row="1" 
+                                                           Orientation="Horizontal" 
+                                                           Margin="0,8,0,10">
+                                                    <TextBlock Text="{Binding Quantity}" 
+                                                              FontWeight="SemiBold"
+                                                              Foreground="#4B5563"/>
+                                                    <TextBlock Text=" × " Foreground="#9CA3AF"/>
+                                                    <TextBlock Text="{Binding Price, StringFormat='${0:F2}'}" 
+                                                              Foreground="#4B5563"/>
+                                                    <TextBlock Text=" = " 
+                                                              Foreground="#9CA3AF" 
+                                                              Margin="5,0"/>
+                                                    <TextBlock Text="{Binding SubtotalFormatted}" 
+                                                              FontWeight="Bold"
+                                                              FontSize="15"
+                                                              Foreground="#10B981"/>
+                                                </StackPanel>
+
+                                                <Button Grid.Row="2" 
+                                                       Content="🗑️ Remove" 
+                                                       Command="{Binding RemoveCommand}"
+                                                       CommandParameter="{Binding ProductId}"
+                                                       Background="#EF4444"
+                                                       Foreground="#41403fff"
+                                                       FontSize="12"
+                                                       Height="32"
+                                                       CornerRadius="6"
+                                                       BorderThickness="0"
+                                                       HorizontalAlignment="Right">
+                                                    <Button.Styles>
+                                                        <Style Selector="Button:pointerover">
+                                                            <Setter Property="Background" Value="#DC2626"/>
+                                                        </Style>
+                                                    </Button.Styles>
+                                                </Button>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+
+                    <!-- Coupon Section -->
+                    <Border Grid.Row="2" 
+                           Background="#F59E0B" 
+                           Padding="15" 
+                           BorderBrush="#E5E7EB"
+                           BorderThickness="1 0 1 1">
+                        <StackPanel>
+                            <TextBlock Text="🎟️ Promo Code" 
+                                      FontWeight="Bold" 
+                                      FontSize="14"
+                                      Foreground="White"
+                                      Margin="0,0,0,10"/>
+                            
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox Grid.Column="0"
+                                        Text="{Binding CouponCode}"
+                                        Watermark="Enter code"
+                                        Height="36"
+                                        Background="#41403fff"
+                                        BorderBrush="#FCD34D"
+                                        BorderThickness="2"
+                                        CornerRadius="6"/>
+
+                                <Button Grid.Column="2"
+                                       Content="Apply"
+                                       Command="{Binding ApplyCouponCommand}"
+                                       Background="#10B981"
+                                       Foreground="White"
+                                       FontWeight="SemiBold"
+                                       Height="36"
+                                       Width="70"
+                                       CornerRadius="6"
+                                       BorderThickness="0">
+                                    <Button.Styles>
+                                        <Style Selector="Button:pointerover">
+                                            <Setter Property="Background" Value="#059669"/>
+                                        </Style>
+                                    </Button.Styles>
+                                </Button>
+                            </Grid>
+
+                            <TextBlock Text="{Binding AppliedCouponText}" 
+                                      FontSize="12" 
+                                      Foreground="White"
+                                      FontWeight="SemiBold"
+                                      Margin="0,8,0,0"
+                                      IsVisible="{Binding HasCoupon}"/>
+                            
+                            <Button Content="❌ Remove Coupon"
+                                   Command="{Binding RemoveCouponCommand}"
+                                   Background="#EF4444"
+                                   Foreground="White"
+                                   FontSize="11"
+                                   Height="28"
+                                   CornerRadius="6"
+                                   BorderThickness="0"
+                                   Margin="0,8,0,0"
+                                   IsVisible="{Binding HasCoupon}">
+                                <Button.Styles>
+                                    <Style Selector="Button:pointerover">
+                                        <Setter Property="Background" Value="#DC2626"/>
+                                    </Style>
+                                </Button.Styles>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Cart Summary & Checkout -->
+                    <Border Grid.Row="3" 
+                           Background="#1F2937" 
+                           Padding="20" 
+                           CornerRadius="0 0 12 12">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="10"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" 
+                                          Text="Subtotal:" 
+                                          Foreground="#D1D5DB"
+                                          FontSize="14"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1" 
+                                          Text="{Binding CartSubtotal}" 
+                                          Foreground="#D1D5DB"
+                                          FontWeight="SemiBold"
+                                          FontSize="14"/>
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" 
+                                          Text="Discount:" 
+                                          Foreground="#F87171"
+                                          FontSize="14"
+                                          Margin="0,8,0,0"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1" 
+                                          Text="{Binding CartDiscount}" 
+                                          Foreground="#F87171"
+                                          FontWeight="SemiBold"
+                                          FontSize="14"
+                                          Margin="0,8,0,0"/>
+
+                                <Border Grid.Row="3" Grid.ColumnSpan="2" 
+                                       Background="#374151" 
+                                       Height="2" 
+                                       CornerRadius="1"
+                                       Margin="0,8"/>
+
+                                <TextBlock Grid.Row="4" Grid.Column="0" 
+                                          Text="TOTAL:" 
+                                          Foreground="White"
+                                          FontSize="20"
+                                          FontWeight="Bold"/>
+                                <TextBlock Grid.Row="4" Grid.Column="1" 
+                                          Text="{Binding CartTotal}" 
+                                          Foreground="#10B981"
+                                          FontSize="22"
+                                          FontWeight="Bold"/>
+                            </Grid>
+
+                            <Button Content="💳 CHECKOUT"
+                                   Command="{Binding CheckoutCommand}"
+                                   IsEnabled="{Binding HasItems}"
+                                   Background="#10B981"
+                                   Foreground="White"
+                                   FontSize="17"
+                                   FontWeight="Bold"
+                                   Height="50"
+                                   CornerRadius="8"
+                                   BorderThickness="0"
+                                   Margin="0,0,0,10">
+                                <Button.Styles>
+                                    <Style Selector="Button:pointerover">
+                                        <Setter Property="Background" Value="#059669"/>
+                                    </Style>
+                                    <Style Selector="Button:disabled">
+                                        <Setter Property="Background" Value="#4B5563"/>
+                                        <Setter Property="Opacity" Value="0.5"/>
+                                    </Style>
+                                </Button.Styles>
+                            </Button>
+
+                            <Button Content="🗑️ Clear Cart"
+                                   Command="{Binding ClearCartCommand}"
+                                   IsEnabled="{Binding HasItems}"
+                                   Background="#6B7280"
+                                   Foreground="White"
+                                   FontSize="13"
+                                   Height="36"
+                                   CornerRadius="8"
+                                   BorderThickness="0">
+                                <Button.Styles>
+                                    <Style Selector="Button:pointerover">
+                                        <Setter Property="Background" Value="#4B5563"/>
+                                    </Style>
+                                    <Style Selector="Button:disabled">
+                                        <Setter Property="Opacity" Value="0.4"/>
+                                    </Style>
+                                </Button.Styles>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+            
+       <!-- ═══════════════════════════════════════════════════════════ -->
+<!-- ORDER HISTORY VIEW (visible when order history is shown) -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<Grid Margin="20" IsVisible="{Binding IsOrderHistoryVisible}">
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="1*"/>
+        <ColumnDefinition Width="20"/>
+        <ColumnDefinition Width="1.5*"/>
+    </Grid.ColumnDefinitions>
+    
+    <!-- Left Panel: Orders List -->
+    <Grid Grid.Column="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Orders Header -->
+        <Border Grid.Row="0" 
+               Background="#3B82F6" 
+               Padding="20"
+               CornerRadius="12 12 0 0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="📋 Order History" 
+                              FontSize="22" 
+                              FontWeight="Bold" 
+                              Foreground="White"/>
+                    <TextBlock Text="{Binding OrderCountText}" 
+                              FontSize="13" 
+                              Foreground="#BFDBFE"
+                              Margin="0,5,0,0"/>
+                </StackPanel>
+                
+                <Button Grid.Column="1"
+                       Content="✕"
+                       Command="{Binding CloseOrderHistoryCommand}"
+                       Background="#2563EB"
+                       Foreground="White"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       Width="40"
+                       Height="40"
+                       CornerRadius="20"
+                       BorderThickness="0"
+                       VerticalAlignment="Center">
+                    <Button.Styles>
+                        <Style Selector="Button:pointerover">
+                            <Setter Property="Background" Value="#1D4ED8"/>
+                        </Style>
+                    </Button.Styles>
+                </Button>
+            </Grid>
+        </Border>
+        
+        <!-- Orders List - FIXED: Using ListBox with SelectedItem binding -->
+        <Border Grid.Row="1" 
+               Background="White" 
+               BorderBrush="#E5E7EB" 
+               BorderThickness="1 0 1 0">
+            <ListBox ItemsSource="{Binding Orders}"
+                    SelectedItem="{Binding SelectedOrder}"
+                    Background="Transparent"
+                    BorderThickness="0">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="#FAFBFC" 
+                               Padding="15" 
+                               Margin="5"
+                               CornerRadius="10"
+                               BorderBrush="#E5E7EB"
+                               BorderThickness="1">
+                            <Border.Styles>
+                                <Style Selector="Border:pointerover">
+                                    <Setter Property="Background" Value="#EFF6FF"/>
+                                    <Setter Property="BorderBrush" Value="#3B82F6"/>
+                                </Style>
+                            </Border.Styles>
+                            
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <!-- Date -->
+                                <TextBlock Grid.Row="0" Grid.Column="0"
+                                          Text="{Binding DateFormatted}" 
+                                          FontSize="14" 
+                                          FontWeight="Bold"
+                                          Foreground="#1F2937"/>
+                                
+                                <!-- Total -->
+                                <TextBlock Grid.Row="0" Grid.Column="1"
+                                          Text="{Binding TotalFormatted}" 
+                                          FontSize="16" 
+                                          FontWeight="Bold"
+                                          Foreground="#10B981"/>
+                                
+                                <!-- Items count -->
+                                <TextBlock Grid.Row="1" Grid.Column="0"
+                                          Text="{Binding ItemCountText}" 
+                                          FontSize="12" 
+                                          Foreground="#6B7280"
+                                          Margin="0,5,0,0"/>
+                                
+                                <!-- Coupon indicator -->
+                                <TextBlock Grid.Row="1" Grid.Column="1"
+                                          Text="{Binding CouponText}" 
+                                          FontSize="11" 
+                                          Foreground="#F59E0B"
+                                          FontWeight="SemiBold"
+                                          Margin="0,5,0,0"
+                                          IsVisible="{Binding HasCoupon}"/>
+                                
+                                <!-- Order ID -->
+                                <TextBlock Grid.Row="2" Grid.ColumnSpan="2"
+                                          Text="{Binding ShortOrderId}" 
+                                          FontSize="10" 
+                                          Foreground="#9CA3AF"
+                                          Margin="0,5,0,0"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+        
+        <!-- Stats Footer -->
+        <Border Grid.Row="2" 
+               Background="#1E3A8A" 
+               Padding="15"
+               CornerRadius="0 0 12 12">
+            <TextBlock Text="{Binding TotalSpentText}" 
+                      FontSize="14" 
+                      FontWeight="SemiBold"
+                      Foreground="White"
+                      HorizontalAlignment="Center"/>
+        </Border>
+    </Grid>
+    
+    <!-- Right Panel: Order Details -->
+    <Grid Grid.Column="2">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Details Header -->
+        <Border Grid.Row="0" 
+               Background="#8B5CF6" 
+               Padding="20"
+               CornerRadius="12 12 0 0">
+            <TextBlock Text="📄 Order Details" 
+                      FontSize="22" 
+                      FontWeight="Bold" 
+                      Foreground="White"/>
+        </Border>
+        
+        <!-- Details Content -->
+        <Border Grid.Row="1" 
+               Background="White" 
+               BorderBrush="#E5E7EB" 
+               BorderThickness="1"
+               CornerRadius="0 0 12 12">
+            
+            <Panel>
+                <!-- When no order selected -->
+                <StackPanel VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"
+                           IsVisible="{Binding !HasSelectedOrder}">
+                    <TextBlock Text="📦" 
+                              FontSize="48" 
+                              HorizontalAlignment="Center"/>
+                    <TextBlock Text="Select an order to view details" 
+                              FontSize="16" 
+                              Foreground="#6B7280"
+                              HorizontalAlignment="Center"
+                              Margin="0,15,0,0"/>
+                </StackPanel>
+                
+                <!-- When order is selected -->
+                <ScrollViewer IsVisible="{Binding HasSelectedOrder}">
+                    <StackPanel Margin="20">
+                        <!-- Order Info -->
+                        <Border Background="#F3F4F6" 
+                               Padding="15" 
+                               CornerRadius="8"
+                               Margin="0,0,0,15">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                
+                                <TextBlock Grid.Row="0" Grid.Column="0"
+                                          Text="{Binding SelectedOrder.DateFormatted}" 
+                                          FontSize="16" 
+                                          FontWeight="Bold"
+                                          Foreground="#1F2937"/>
+                                
+                                <TextBlock Grid.Row="0" Grid.Column="1"
+                                          Text="{Binding SelectedOrder.TotalFormatted}" 
+                                          FontSize="20" 
+                                          FontWeight="Bold"
+                                          Foreground="#10B981"/>
+                                
+                                <TextBlock Grid.Row="1" Grid.Column="0"
+                                          Text="{Binding SelectedOrder.ShortOrderId}" 
+                                          FontSize="11" 
+                                          Foreground="#6B7280"
+                                          Margin="0,5,0,0"/>
+                                
+                                <TextBlock Grid.Row="1" Grid.Column="1"
+                                          Text="{Binding SelectedOrder.CouponText}" 
+                                          FontSize="12" 
+                                          Foreground="#F59E0B"
+                                          FontWeight="SemiBold"
+                                          IsVisible="{Binding SelectedOrder.HasCoupon}"/>
+                            </Grid>
+                        </Border>
                         
-                        <Button Content="❌ Remove Coupon"
-                               Command="{Binding RemoveCouponCommand}"
+                        <!-- Items Header -->
+                        <TextBlock Text="Items Ordered:" 
+                                  FontSize="14" 
+                                  FontWeight="Bold"
+                                  Foreground="#374151"
+                                  Margin="0,0,0,10"/>
+                        
+                        <!-- Items List -->
+                        <ItemsControl ItemsSource="{Binding SelectedOrder.Items}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#FAFBFC" 
+                                           Padding="12" 
+                                           CornerRadius="8"
+                                           BorderBrush="#E5E7EB"
+                                           BorderThickness="1"
+                                           Margin="0,0,0,8">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            
+                                            <!-- Product Name -->
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                      Text="{Binding Product.Name}" 
+                                                      FontSize="14" 
+                                                      FontWeight="SemiBold"
+                                                      Foreground="#1F2937"/>
+                                            
+                                            <!-- Unit Price -->
+                                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                                      Text="{Binding Product.Price, StringFormat='${0:F2}'}" 
+                                                      FontSize="14" 
+                                                      FontWeight="Bold"
+                                                      Foreground="#10B981"/>
+                                            
+                                            <!-- Quantity -->
+                                            <StackPanel Grid.Row="1" Grid.Column="0"
+                                                       Orientation="Horizontal"
+                                                       Margin="0,5,0,0">
+                                                <TextBlock Text="Qty: " 
+                                                          FontSize="12" 
+                                                          Foreground="#6B7280"/>
+                                                <TextBlock Text="{Binding Quantity}" 
+                                                          FontSize="12" 
+                                                          FontWeight="SemiBold"
+                                                          Foreground="#4B5563"/>
+                                            </StackPanel>
+                                            
+                                            <!-- Category -->
+                                            <TextBlock Grid.Row="1" Grid.Column="1"
+                                                      Text="{Binding Product.Category}" 
+                                                      FontSize="11" 
+                                                      Foreground="#9CA3AF"
+                                                      Margin="0,5,0,0"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        
+                        <!-- Delete Button -->
+                        <Button Content="🗑️ Delete This Order"
+                               Command="{Binding DeleteOrderCommand}"
+                               CommandParameter="{Binding SelectedOrder.FileName}"
                                Background="#EF4444"
                                Foreground="White"
-                               FontSize="11"
-                               Height="28"
-                               CornerRadius="6"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Height="40"
+                               CornerRadius="8"
                                BorderThickness="0"
-                               Margin="0,8,0,0"
-                               IsVisible="{Binding HasCoupon}">
+                               Margin="0,20,0,0"
+                               HorizontalAlignment="Stretch">
                             <Button.Styles>
                                 <Style Selector="Button:pointerover">
                                     <Setter Property="Background" Value="#DC2626"/>
@@ -389,118 +845,17 @@
                             </Button.Styles>
                         </Button>
                     </StackPanel>
-                </Border>
+                </ScrollViewer>
+            </Panel>
+        </Border>
+    </Grid>
+</Grid>
+</Grid>
 
-                <!-- Modern Cart Summary & Checkout -->
-                <Border Grid.Row="3" 
-                       Background="#1F2937" 
-                       Padding="20" 
-                       CornerRadius="0 0 12 12"
-                       BoxShadow="0 -2 8 0 #10000000">
-                    <StackPanel>
-                        <Grid Margin="0,0,0,15">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="10"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Grid.Row="0" Grid.Column="0" 
-                                      Text="Subtotal:" 
-                                      Foreground="#D1D5DB"
-                                      FontSize="14"/>
-                            <TextBlock Grid.Row="0" Grid.Column="1" 
-                                      Text="{Binding CartSubtotal}" 
-                                      Foreground="#D1D5DB"
-                                      FontWeight="SemiBold"
-                                      FontSize="14"/>
-
-                            <TextBlock Grid.Row="1" Grid.Column="0" 
-                                      Text="Discount:" 
-                                      Foreground="#F87171"
-                                      FontSize="14"
-                                      Margin="0,8,0,0"/>
-                            <TextBlock Grid.Row="1" Grid.Column="1" 
-                                      Text="{Binding CartDiscount}" 
-                                      Foreground="#F87171"
-                                      FontWeight="SemiBold"
-                                      FontSize="14"
-                                      Margin="0,8,0,0"/>
-
-                            <Border Grid.Row="3" Grid.ColumnSpan="2" 
-                                   Background="#374151" 
-                                   Height="2" 
-                                   CornerRadius="1"
-                                   Margin="0,8"/>
-
-                            <TextBlock Grid.Row="4" Grid.Column="0" 
-                                      Text="TOTAL:" 
-                                      Foreground="White"
-                                      FontSize="20"
-                                      FontWeight="Bold"/>
-                            <TextBlock Grid.Row="4" Grid.Column="1" 
-                                      Text="{Binding CartTotal}" 
-                                      Foreground="#10B981"
-                                      FontSize="22"
-                                      FontWeight="Bold"/>
-                        </Grid>
-
-                        <Button Content="💳 CHECKOUT"
-                               Command="{Binding CheckoutCommand}"
-                               IsEnabled="{Binding HasItems}"
-                               Background="#10B981"
-                               Foreground="White"
-                               FontSize="17"
-                               FontWeight="Bold"
-                               Height="50"
-                               CornerRadius="8"
-                               BorderThickness="0"
-                               Margin="0,0,0,10">
-                            <Button.Styles>
-                                <Style Selector="Button:pointerover">
-                                    <Setter Property="Background" Value="#059669"/>
-                                </Style>
-                                <Style Selector="Button:disabled">
-                                    <Setter Property="Background" Value="#4B5563"/>
-                                    <Setter Property="Opacity" Value="0.5"/>
-                                </Style>
-                            </Button.Styles>
-                        </Button>
-
-                        <Button Content="🗑️ Clear Cart"
-                               Command="{Binding ClearCartCommand}"
-                               IsEnabled="{Binding HasItems}"
-                               Background="#6B7280"
-                               Foreground="White"
-                               FontSize="13"
-                               Height="36"
-                               CornerRadius="8"
-                               BorderThickness="0">
-                            <Button.Styles>
-                                <Style Selector="Button:pointerover">
-                                    <Setter Property="Background" Value="#4B5563"/>
-                                </Style>
-                                <Style Selector="Button:disabled">
-                                    <Setter Property="Opacity" Value="0.4"/>
-                                </Style>
-                            </Button.Styles>
-                        </Button>
-                    </StackPanel>
-                </Border>
-            </Grid>
-        </Grid>
-
-        <!-- Modern Status Bar -->
+        <!-- Status Bar -->
         <Border Grid.Row="2" 
                Background="#374151" 
-               Padding="20,12"
-               BoxShadow="0 -1 4 0 #10000000">
+               Padding="20,12">
             <TextBlock Text="{Binding StatusMessage}" 
                       Foreground="#F3F4F6"
                       FontSize="13"

@@ -1,7 +1,7 @@
 {
   "format": 1,
   "restore": {
-    "E:\\StoreSimulatorGUI\\Tests\\StoreSimulatorGUI.Tests.fsproj": {}
+    "E:\\StoreSimulatorGUI\\tests\\StoreSimulatorGUI.Tests.fsproj": {}
   },
   "projects": {
     "E:\\StoreSimulatorGUI\\StoreSimulatorGUI.fsproj": {
@@ -120,14 +120,14 @@
         }
       }
     },
-    "E:\\StoreSimulatorGUI\\Tests\\StoreSimulatorGUI.Tests.fsproj": {
+    "E:\\StoreSimulatorGUI\\tests\\StoreSimulatorGUI.Tests.fsproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\StoreSimulatorGUI\\Tests\\StoreSimulatorGUI.Tests.fsproj",
+        "projectUniqueName": "E:\\StoreSimulatorGUI\\tests\\StoreSimulatorGUI.Tests.fsproj",
         "projectName": "StoreSimulatorGUI.Tests",
-        "projectPath": "E:\\StoreSimulatorGUI\\Tests\\StoreSimulatorGUI.Tests.fsproj",
+        "projectPath": "E:\\StoreSimulatorGUI\\tests\\StoreSimulatorGUI.Tests.fsproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "E:\\StoreSimulatorGUI\\Tests\\obj\\",
+        "outputPath": "E:\\StoreSimulatorGUI\\tests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"

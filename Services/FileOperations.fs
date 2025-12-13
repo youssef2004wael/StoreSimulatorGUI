@@ -278,3 +278,92 @@ let backupOrders (backupDirectory: string) : Result<int, string> =
         Ok orders.Length
     with
     | ex -> Error (sprintf "Failed to backup orders: %s" ex.Message)
+// ═══════════════════════════════════════════════════════════════
+// NEW: LOAD ORDERS FEATURE
+// ═══════════════════════════════════════════════════════════════
+
+// Type to represent an order for display purposes
+type OrderDisplayInfo = {
+    FileName: string
+    OrderId: string
+    OrderDate: DateTime
+    ItemCount: int
+    Total: decimal
+    CouponUsed: string option
+    Items: CartItem list
+}
+
+// Load a single order and convert to display format
+let loadOrderAsDisplayInfo (fileName: string) : Result<OrderDisplayInfo, string> =
+    let fullPath = Path.Combine(ordersDirectory, fileName)
+    match loadOrderFromJson fullPath with
+    | Ok summary ->
+        Ok {
+            FileName = fileName
+            OrderId = summary.OrderId
+            OrderDate = summary.OrderDate
+            ItemCount = summary.Items |> List.sumBy (fun i -> i.Quantity)
+            Total = summary.Total
+            CouponUsed = summary.CouponUsed
+            Items = summary.Items
+        }
+    | Error msg -> Error msg
+
+// Load all orders as display info (sorted by date, newest first)
+let loadAllOrdersAsDisplayInfo () : OrderDisplayInfo list =
+    listSavedOrders()
+    |> List.choose (fun fileName ->
+        match loadOrderAsDisplayInfo fileName with
+        | Ok info -> Some info
+        | Error _ -> None)
+    |> List.sortByDescending (fun o -> o.OrderDate)
+
+// Format order for detailed display
+let formatOrderDetails (order: OrderDisplayInfo) : string =
+    let itemsText = 
+        order.Items
+        |> List.map (fun item ->
+            sprintf "  • %s x%d @ $%.2f = $%.2f" 
+                item.Product.Name 
+                item.Quantity 
+                item.Product.Price 
+                (item.Product.Price * decimal item.Quantity))
+        |> String.concat "\n"
+    
+    let couponText = 
+        match order.CouponUsed with
+        | Some code -> sprintf "\nCoupon Used: %s" code
+        | None -> ""
+    
+    sprintf """═══════════════════════════════════════
+Order ID: %s
+Date: %s
+═══════════════════════════════════════
+
+Items:
+%s
+
+───────────────────────────────────────
+Total: $%.2f%s
+═══════════════════════════════════════"""
+        (order.OrderId.Substring(0, 8) + "...")  // Shortened ID
+        (order.OrderDate.ToString("yyyy-MM-dd HH:mm:ss"))
+        itemsText
+        order.Total
+        couponText
+
+// Get order summary for list display
+let formatOrderSummary (order: OrderDisplayInfo) : string =
+    let couponIndicator = if order.CouponUsed.IsSome then " 🎟️" else ""
+    sprintf "%s | %d items | $%.2f%s" 
+        (order.OrderDate.ToString("yyyy-MM-dd HH:mm"))
+        order.ItemCount
+        order.Total
+        couponIndicator
+
+// Get total number of orders
+let getOrderStatistics () : int * decimal =
+    let orders = loadAllOrdersAsDisplayInfo()
+    let count = orders.Length
+    let totalSpent = orders |> List.sumBy (fun o -> o.Total)
+    (count, totalSpent)
