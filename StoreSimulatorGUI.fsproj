@@ -8,28 +8,39 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Core Models and Logic -->
-    <Compile Include="Models.fs" />
-    <Compile Include="Catalog.fs" />
-    <Compile Include="Search.fs" />
-    <Compile Include="Cart.fs" />
-    <Compile Include="PriceCalculator.fs" />
-    <Compile Include="FileOperations.fs" />
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- MODELS - Data Types (compile first!)                    -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <Compile Include="Models\Models.fs" />
     
-    <!-- ViewModels -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SERVICES - Business Logic (MODEL layer)                 -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <Compile Include="Services\Catalog.fs" />
+    <Compile Include="Services\Search.fs" />
+    <Compile Include="Services\Cart.fs" />
+    <Compile Include="Services\PriceCalculator.fs" />
+    <Compile Include="Services\FileOperations.fs" />
+    
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- VIEWMODELS - Presentation Logic                         -->
+    <!-- ═══════════════════════════════════════════════════════ -->
     <Compile Include="ViewModels\MainViewModel.fs" />
     
-    <!-- Views -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- VIEWS - User Interface                                  -->
+    <!-- ═══════════════════════════════════════════════════════ -->
     <Compile Include="Views\MainWindow.axaml.fs">
       <DependentUpon>MainWindow.axaml</DependentUpon>
     </Compile>
     
-    <!-- App -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- APP INFRASTRUCTURE                                      -->
+    <!-- ═══════════════════════════════════════════════════════ -->
     <Compile Include="App.axaml.fs">
       <DependentUpon>App.axaml</DependentUpon>
     </Compile>
-    
-    <!-- Entry Point (must be last) -->
+    <Compile Include="ViewLocator.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
