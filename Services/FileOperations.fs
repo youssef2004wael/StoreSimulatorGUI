@@ -5,23 +5,23 @@ open System.IO
 open Newtonsoft.Json
 open StoreSimulatorGUI.Models
 
-// JSON serialization settings
+
 let private jsonSettings = 
     JsonSerializerSettings(
         Formatting = Formatting.Indented,
         NullValueHandling = NullValueHandling.Ignore
     )
 
-// Default directories
+
 let private ordersDirectory = "Orders"
 let private catalogDirectory = "Catalog"
 
-// Ensure directory exists
+
 let private ensureDirectoryExists (directory: string) =
     if not (Directory.Exists(directory)) then
         Directory.CreateDirectory(directory) |> ignore
 
-// Save order summary to JSON
+
 let saveOrderToJson (summary: OrderSummary) (filePath: string) : Result<string, string> =
     try
         let directory = Path.GetDirectoryName(filePath)
@@ -34,7 +34,7 @@ let saveOrderToJson (summary: OrderSummary) (filePath: string) : Result<string, 
     with
     | ex -> Error (sprintf "Failed to save order: %s" ex.Message)
 
-// Load order from JSON
+
 let loadOrderFromJson (filePath: string) : Result<OrderSummary, string> =
     try
         if File.Exists(filePath) then
@@ -46,7 +46,7 @@ let loadOrderFromJson (filePath: string) : Result<OrderSummary, string> =
     with
     | ex -> Error (sprintf "Failed to load order: %s" ex.Message)
 
-// Save catalog to JSON
+
 let saveCatalogToJson (catalog: Map<int, Product>) (filePath: string) : Result<string, string> =
     try
         let directory = Path.GetDirectoryName(filePath)
@@ -60,7 +60,7 @@ let saveCatalogToJson (catalog: Map<int, Product>) (filePath: string) : Result<s
     with
     | ex -> Error (sprintf "Failed to save catalog: %s" ex.Message)
 
-// Load catalog from JSON
+
 let loadCatalogFromJson (filePath: string) : Result<Map<int, Product>, string> =
     try
         if File.Exists(filePath) then
@@ -73,7 +73,7 @@ let loadCatalogFromJson (filePath: string) : Result<Map<int, Product>, string> =
     with
     | ex -> Error (sprintf "Failed to load catalog: %s" ex.Message)
 
-// Create order summary from cart
+
 let createOrderSummary (cart: Cart) : OrderSummary =
     {
         OrderId = Guid.NewGuid().ToString()
@@ -82,15 +82,15 @@ let createOrderSummary (cart: Cart) : OrderSummary =
         Subtotal = cart.TotalBeforeDiscount
         Discount = cart.Discount
         Total = cart.FinalTotal
-        CouponUsed = cart.AppliedCoupon  // ← ADD THIS LINE
+        CouponUsed = cart.AppliedCoupon  
     }
 
-// Generate filename with timestamp
+
 let generateOrderFileName () : string =
     let timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss")
     sprintf "order_%s.json" timestamp
 
-// Save order with auto-generated filename
+
 let saveOrder (cart: Cart) : Result<string, string> =
     try
         ensureDirectoryExists ordersDirectory
@@ -104,7 +104,7 @@ let saveOrder (cart: Cart) : Result<string, string> =
     | ex -> Error (sprintf "Failed to save order: %s" ex.Message)
 
 
-// List all saved orders
+
 let listSavedOrders () : string list =
     ensureDirectoryExists ordersDirectory
     if Directory.Exists(ordersDirectory) then
@@ -112,11 +112,11 @@ let listSavedOrders () : string list =
         |> Array.toList
         |> List.map Path.GetFileName
         |> List.sort
-        |> List.rev // Most recent first
+        |> List.rev 
     else
         []
 
-// Delete order file
+
 let deleteOrder (fileName: string) : Result<unit, string> =
     try
         let fullPath = Path.Combine(ordersDirectory, fileName)
@@ -128,7 +128,7 @@ let deleteOrder (fileName: string) : Result<unit, string> =
     with
     | ex -> Error (sprintf "Failed to delete order: %s" ex.Message)
 
-// Export cart to readable text format
+
 let exportCartToText (cart: Cart) (filePath: string) : Result<string, string> =
     try
         let directory = Path.GetDirectoryName(filePath)
@@ -163,7 +163,7 @@ let exportCartToText (cart: Cart) (filePath: string) : Result<string, string> =
     with
     | ex -> Error (sprintf "Failed to export cart: %s" ex.Message)
 
-// Export catalog to CSV
+
 let exportCatalogToCsv (catalog: Map<int, Product>) (filePath: string) : Result<string, string> =
     try
         let directory = Path.GetDirectoryName(filePath)
@@ -185,7 +185,7 @@ let exportCatalogToCsv (catalog: Map<int, Product>) (filePath: string) : Result<
     | ex -> Error (sprintf "Failed to export catalog: %s" ex.Message)
 
 
-// Type to represent an order for display purposes
+
 type OrderDisplayInfo = {
     FileName: string
     OrderId: string
@@ -196,7 +196,6 @@ type OrderDisplayInfo = {
     Items: CartItem list
 }
 
-// Load a single order and convert to display format
 let loadOrderAsDisplayInfo (fileName: string) : Result<OrderDisplayInfo, string> =
     let fullPath = Path.Combine(ordersDirectory, fileName)
     match loadOrderFromJson fullPath with
@@ -212,7 +211,7 @@ let loadOrderAsDisplayInfo (fileName: string) : Result<OrderDisplayInfo, string>
         }
     | Error msg -> Error msg
 
-// Load all orders as display info (sorted by date, newest first)
+
 let loadAllOrdersAsDisplayInfo () : OrderDisplayInfo list =
     listSavedOrders()
     |> List.choose (fun fileName ->
@@ -221,7 +220,7 @@ let loadAllOrdersAsDisplayInfo () : OrderDisplayInfo list =
         | Error _ -> None)
     |> List.sortByDescending (fun o -> o.OrderDate)
 
-// Format order for detailed display
+
 let formatOrderDetails (order: OrderDisplayInfo) : string =
     let itemsText = 
         order.Items
@@ -249,13 +248,13 @@ Items:
 ───────────────────────────────────────
 Total: $%.2f%s
 ═══════════════════════════════════════"""
-        (order.OrderId.Substring(0, 8) + "...")  // Shortened ID
+        (order.OrderId.Substring(0, 8) + "...")  
         (order.OrderDate.ToString("yyyy-MM-dd HH:mm:ss"))
         itemsText
         order.Total
         couponText
 
-// Get order summary for list display
+
 let formatOrderSummary (order: OrderDisplayInfo) : string =
     let couponIndicator = if order.CouponUsed.IsSome then " 🎟️" else ""
     sprintf "%s | %d items | $%.2f%s" 
