@@ -72,9 +72,19 @@ let ``addProduct should add new product to catalog`` () =
         Category = "Test"
         Stock = 10
     }
+
+    let newProduct2 = {
+        Id = 101
+        Name = "Test Product2"
+        Description = "Test Description2"
+        Price = 70.00m
+        Category = "Test"
+        Stock = 10
+    }
     
     // Act
     let updatedCatalog = addProduct catalog newProduct
+    let updatedCatalog = addProduct updatedCatalog newProduct2
     
     // Assert
     updatedCatalog.Count |> should equal 16
