@@ -34,14 +34,6 @@ let getAutomaticDiscount (subtotal: decimal) : DiscountRule =
     else
         NoDiscount
 
-// Get discount description
-let getDiscountDescription (rule: DiscountRule) : string =
-    match rule with
-    | NoDiscount -> "No discount"
-    | PercentageOff percent -> sprintf "%.0f%% off" percent
-    | FixedAmountOff amount -> sprintf "$%.2f off" amount
-    | BuyXGetY (buy, free) -> sprintf "Buy %d get %d free" buy free
-
 // Apply coupon code (MOVED UP - MUST BE BEFORE recalculateCart)
 let applyCoupon (couponCode: string) : Result<DiscountRule, string> =
     match couponCode.ToUpper() with
@@ -113,22 +105,6 @@ let getSavingsPercentage (cart: Cart) : decimal =
     else
         0m
 
-// Display price breakdown
-let displayPriceBreakdown (cart: Cart) : string =
-    let lines = [
-        "--- Price Breakdown ---"
-        sprintf "Subtotal:        $%.2f" cart.TotalBeforeDiscount
-        if cart.Discount > 0m then
-            match cart.AppliedCoupon with
-            | Some coupon ->
-                sprintf "Coupon (%s):    -$%.2f" coupon cart.Discount
-            | None ->
-                sprintf "Discount:       -$%.2f" cart.Discount
-        "------------------------"
-        sprintf "Final Total:     $%.2f" cart.FinalTotal
-        "========================"
-    ]
-    String.concat "\n" (lines |> List.filter (fun s -> s <> ""))
 
 // Calculate tax
 let calculateTax (amount: decimal) (taxRate: decimal) : decimal =
@@ -170,66 +146,3 @@ let applyCouponToCart (cart: Cart) (couponCode: string) : Result<Cart, string> =
 let removeCoupon (cart: Cart) : Cart =
     let recalculated = calculateTotal { cart with AppliedCoupon = None } None
     recalculated
-
-// Check if qualifies for free shipping
-let qualifiesForFreeShipping (cart: Cart) (threshold: decimal) : bool =
-    cart.FinalTotal >= threshold
-
-// Calculate amount needed for free shipping
-let amountNeededForFreeShipping (cart: Cart) (threshold: decimal) : decimal =
-    if qualifiesForFreeShipping cart threshold then
-        0m
-    else
-        threshold - cart.FinalTotal
-
-// Display detailed price summary
-let displayDetailedPriceSummary (cart: Cart) (taxRate: decimal) (freeShippingThreshold: decimal) : string =
-    let (tax, shipping, grandTotal) = calculateGrandTotal cart taxRate freeShippingThreshold
-    let lines = [
-        "================================"
-        "      PRICE SUMMARY"
-        "================================"
-        sprintf "Subtotal:          $%.2f" cart.TotalBeforeDiscount
-        if cart.Discount > 0m then
-            match cart.AppliedCoupon with
-            | Some coupon ->
-                sprintf "Coupon (%s):      -$%.2f (%.1f%% off)" coupon cart.Discount (getSavingsPercentage cart)
-            | None ->
-                sprintf "Discount:         -$%.2f (%.1f%% off)" cart.Discount (getSavingsPercentage cart)
-        "--------------------------------"
-        sprintf "Subtotal after discount: $%.2f" cart.FinalTotal
-        sprintf "Tax (%.1f%%):        $%.2f" (taxRate * 100m) tax
-        if shipping = 0m then
-            sprintf "Shipping:          FREE ✓"
-        else
-            sprintf "Shipping:          $%.2f" shipping
-        "================================"
-        sprintf "GRAND TOTAL:       $%.2f" grandTotal
-        "================================"
-    ]
-    String.concat "\n" (lines |> List.filter (fun s -> s <> ""))
-
-// Calculate average item price in cart
-let getAverageItemPrice (cart: Cart) : decimal =
-    if isEmpty cart then
-        0m
-    else
-        cart.TotalBeforeDiscount / decimal (getItemCount cart)
-
-// Find most expensive item in cart
-let getMostExpensiveItem (cart: Cart) : CartItem option =
-    if isEmpty cart then
-        None
-    else
-        cart.Items 
-        |> List.maxBy (fun item -> item.Product.Price)
-        |> Some
-
-// Find cheapest item in cart
-let getCheapestItem (cart: Cart) : CartItem option =
-    if isEmpty cart then
-        None
-    else
-        cart.Items 
-        |> List.minBy (fun item -> item.Product.Price)
-        |> Some

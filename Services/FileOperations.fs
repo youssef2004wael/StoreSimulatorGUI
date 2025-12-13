@@ -103,18 +103,6 @@ let saveOrder (cart: Cart) : Result<string, string> =
     with
     | ex -> Error (sprintf "Failed to save order: %s" ex.Message)
 
-// Save order to specific directory
-let saveOrderToDirectory (cart: Cart) (directory: string) : Result<string, string> =
-    try
-        ensureDirectoryExists directory
-        
-        let summary = createOrderSummary cart
-        let fileName = generateOrderFileName()
-        let fullPath = Path.Combine(directory, fileName)
-        
-        saveOrderToJson summary fullPath
-    with
-    | ex -> Error (sprintf "Failed to save order: %s" ex.Message)
 
 // List all saved orders
 let listSavedOrders () : string list =
@@ -127,21 +115,6 @@ let listSavedOrders () : string list =
         |> List.rev // Most recent first
     else
         []
-
-// List orders in specific directory
-let listOrdersInDirectory (directory: string) : string list =
-    if Directory.Exists(directory) then
-        Directory.GetFiles(directory, "order_*.json")
-        |> Array.toList
-        |> List.map Path.GetFileName
-        |> List.sort
-        |> List.rev
-    else
-        []
-
-// Get order count
-let getOrderCount () : int =
-    listSavedOrders().Length
 
 // Delete order file
 let deleteOrder (fileName: string) : Result<unit, string> =
@@ -211,76 +184,6 @@ let exportCatalogToCsv (catalog: Map<int, Product>) (filePath: string) : Result<
     with
     | ex -> Error (sprintf "Failed to export catalog: %s" ex.Message)
 
-// Save default catalog
-let saveDefaultCatalog (catalog: Map<int, Product>) : Result<string, string> =
-    try
-        ensureDirectoryExists catalogDirectory
-        let filePath = Path.Combine(catalogDirectory, "catalog.json")
-        saveCatalogToJson catalog filePath
-    with
-    | ex -> Error (sprintf "Failed to save catalog: %s" ex.Message)
-
-// Load default catalog
-let loadDefaultCatalog () : Result<Map<int, Product>, string> =
-    let filePath = Path.Combine(catalogDirectory, "catalog.json")
-    loadCatalogFromJson filePath
-
-// Display order summary from file
-let displayOrderFromFile (fileName: string) : Result<string, string> =
-    let fullPath = Path.Combine(ordersDirectory, fileName)
-    match loadOrderFromJson fullPath with
-    | Ok summary ->
-        let lines = [
-            "========================================="
-            sprintf "Order ID: %s" summary.OrderId
-            sprintf "Date: %s" (summary.OrderDate.ToString("yyyy-MM-dd HH:mm:ss"))
-            "========================================="
-            ""
-            "Items:"
-            yield! summary.Items |> List.map (fun item ->
-                sprintf "  • %s x%d @ $%.2f = $%.2f" 
-                    item.Product.Name 
-                    item.Quantity 
-                    item.Product.Price 
-                    (item.Product.Price * decimal item.Quantity))
-            ""
-            "========================================="
-            sprintf "Subtotal:  $%.2f" summary.Subtotal
-            sprintf "Discount: -$%.2f" summary.Discount
-            "----------------------------------------"
-            sprintf "TOTAL:     $%.2f" summary.Total
-            "========================================="
-        ]
-        Ok (String.concat "\n" lines)
-    | Error msg -> Error msg
-
-// Get total sales from all orders
-let getTotalSales () : decimal =
-    listSavedOrders()
-    |> List.choose (fun fileName ->
-        let fullPath = Path.Combine(ordersDirectory, fileName)
-        match loadOrderFromJson fullPath with
-        | Ok summary -> Some summary.Total
-        | Error _ -> None)
-    |> List.sum
-
-// Backup orders to directory
-let backupOrders (backupDirectory: string) : Result<int, string> =
-    try
-        ensureDirectoryExists backupDirectory
-        let orders = listSavedOrders()
-        
-        orders |> List.iter (fun fileName ->
-            let sourcePath = Path.Combine(ordersDirectory, fileName)
-            let destPath = Path.Combine(backupDirectory, fileName)
-            File.Copy(sourcePath, destPath, true))
-        
-        Ok orders.Length
-    with
-    | ex -> Error (sprintf "Failed to backup orders: %s" ex.Message)
-// ═══════════════════════════════════════════════════════════════
-// NEW: LOAD ORDERS FEATURE
-// ═══════════════════════════════════════════════════════════════
 
 // Type to represent an order for display purposes
 type OrderDisplayInfo = {
@@ -360,10 +263,3 @@ let formatOrderSummary (order: OrderDisplayInfo) : string =
         order.ItemCount
         order.Total
         couponIndicator
-
-// Get total number of orders
-let getOrderStatistics () : int * decimal =
-    let orders = loadAllOrdersAsDisplayInfo()
-    let count = orders.Length
-    let totalSpent = orders |> List.sumBy (fun o -> o.Total)
-    (count, totalSpent)

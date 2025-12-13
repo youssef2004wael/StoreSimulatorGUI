@@ -56,33 +56,14 @@ let decreaseStockBatch (catalog: Map<int, Product>) (items: CartItem list) : Map
         | None -> currentCatalog
     ) catalog
 
-// Update product price
-let updatePrice (catalog: Map<int, Product>) (productId: int) (newPrice: decimal) : Map<int, Product> =
-    match catalog.TryFind productId with
-    | Some product -> 
-        let updatedProduct = { product with Price = newPrice }
-        catalog.Add(productId, updatedProduct)
-    | None -> catalog
+
 
 // Remove product from catalog
 let removeProduct (catalog: Map<int, Product>) (productId: int) : Map<int, Product> =
     catalog.Remove(productId)
 
-// Display product details
-let displayProduct (product: Product) : string =
-    sprintf "[%d] %s - $%.2f\n    %s\n    Category: %s | Stock: %d" 
-        product.Id product.Name product.Price product.Description product.Category product.Stock
 
-// Display all products
-let displayAllProducts (catalog: Map<int, Product>) : string =
-    let products = getAllProducts catalog
-    products
-    |> List.map displayProduct
-    |> String.concat "\n\n"
 
-// Get product count
-let getProductCount (catalog: Map<int, Product>) : int =
-    catalog.Count
 
 // Check if product exists
 let productExists (catalog: Map<int, Product>) (productId: int) : bool =
