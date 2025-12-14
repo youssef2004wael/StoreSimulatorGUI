@@ -2,7 +2,7 @@ module StoreSimulatorGUI.PriceCalculator
 
 open StoreSimulatorGUI.Models
 open StoreSimulatorGUI.Cart
-
+//edited by ezz
 // Calculate subtotal (before discounts)
 let calculateSubtotal (cart: Cart) : decimal =
     cart.Items
