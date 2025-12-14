@@ -69,22 +69,7 @@ let updateQuantity (cart: Cart) (productId: int) (newQuantity: int) : Result<Car
         | None ->
             Error "Product not in cart"
 
-let incrementQuantity (cart: Cart) (productId: int) : Result<Cart, string> =
-    match findCartItem cart productId with
-    | Some item ->
-        updateQuantity cart productId (item.Quantity + 1)
-    | None ->
-        Error "Product not in cart"
 
-let decrementQuantity (cart: Cart) (productId: int) : Result<Cart, string> =
-    match findCartItem cart productId with
-    | Some item ->
-        if item.Quantity <= 1 then
-            Ok (removeFromCart cart productId)
-        else
-            updateQuantity cart productId (item.Quantity - 1)
-    | None ->
-        Error "Product not in cart"
 
 let clearCart (cart: Cart) : Cart =
     emptyCart
@@ -98,33 +83,10 @@ let getUniqueProductCount (cart: Cart) : int =
 let isEmpty (cart: Cart) : bool =
     cart.Items.IsEmpty
 
-let getCartWeight (cart: Cart) : decimal =
-    cart.Items 
-    |> List.sumBy (fun item -> decimal item.Quantity)
 
 let displayCartItem (item: CartItem) : string =
     let subtotal = item.Product.Price * decimal item.Quantity
     sprintf "%s x %d @ $%.2f = $%.2f" 
         item.Product.Name item.Quantity item.Product.Price subtotal
 
-let displayAllCartItems (cart: Cart) : string =
-    if isEmpty cart then
-        "Cart is empty"
-    else
-        cart.Items
-        |> List.map displayCartItem
-        |> String.concat "\n"
 
-let getCartSummary (cart: Cart) : string =
-    sprintf "Items: %d | Unique Products: %d | Total: $%.2f" 
-        (getItemCount cart)
-        (getUniqueProductCount cart)
-        cart.FinalTotal
-
-let mergeCarts (cart1: Cart) (cart2: Cart) : Cart =
-    let mutable merged = cart1
-    for item in cart2.Items do
-        match addToCart merged item.Product item.Quantity with
-        | Ok newCart -> merged <- newCart
-        | Error _ -> () // Skip items that can't be added
-    merged

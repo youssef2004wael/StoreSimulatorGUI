@@ -3,16 +3,16 @@ module StoreSimulatorGUI.PriceCalculator
 open StoreSimulatorGUI.Models
 open StoreSimulatorGUI.Cart
 
-
+// Calculate subtotal (before discounts)
 let calculateSubtotal (cart: Cart) : decimal =
     cart.Items
     |> List.sumBy (fun item -> item.Product.Price * decimal item.Quantity)
 
-
+// Calculate line item total
 let calculateLineItemTotal (item: CartItem) : decimal =
     item.Product.Price * decimal item.Quantity
 
-
+// Apply discount rule to cart
 let applyDiscount (subtotal: decimal) (rule: DiscountRule) : decimal =
     match rule with
     | NoDiscount -> 0m
@@ -23,7 +23,7 @@ let applyDiscount (subtotal: decimal) (rule: DiscountRule) : decimal =
     | BuyXGetY (buy, free) -> 
         0m
 
-
+// Discount rules based on cart value (automatic discounts)
 let getAutomaticDiscount (subtotal: decimal) : DiscountRule =
     if subtotal >= 1000m then
         PercentageOff 15m
@@ -34,14 +34,7 @@ let getAutomaticDiscount (subtotal: decimal) : DiscountRule =
     else
         NoDiscount
 
-let getDiscountDescription (rule: DiscountRule) : string =
-    match rule with
-    | NoDiscount -> "No discount"
-    | PercentageOff percent -> sprintf "%.0f%% off" percent
-    | FixedAmountOff amount -> sprintf "$%.2f off" amount
-    | BuyXGetY (buy, free) -> sprintf "Buy %d get %d free" buy free
-
-
+// Apply coupon code (MOVED UP - MUST BE BEFORE recalculateCart)
 let applyCoupon (couponCode: string) : Result<DiscountRule, string> =
     match couponCode.ToUpper() with
     | "SAVE10" -> Ok (PercentageOff 10m)
@@ -52,7 +45,7 @@ let applyCoupon (couponCode: string) : Result<DiscountRule, string> =
     | "WELCOME15" -> Ok (PercentageOff 15m)
     | _ -> Error "Invalid coupon code"
 
-
+// Validate coupon minimum purchase requirement (MOVED UP)
 let validateCouponMinimum (subtotal: decimal) (couponCode: string) : bool =
     match couponCode.ToUpper() with
     | "SAVE20" -> subtotal >= 100m
@@ -60,6 +53,7 @@ let validateCouponMinimum (subtotal: decimal) (couponCode: string) : bool =
     | "FLAT100" -> subtotal >= 500m
     | _ -> true
 
+// Calculate total with discount (preserves coupon)
 let calculateTotal (cart: Cart) (discountRule: DiscountRule option) : Cart =
     let subtotal = calculateSubtotal cart
     
@@ -81,11 +75,11 @@ let calculateTotal (cart: Cart) (discountRule: DiscountRule option) : Cart =
         Discount = discount
         FinalTotal = finalTotal }
 
-
+// Recalculate cart totals (preserves coupon) - NOW applyCoupon is defined above
 let recalculateCart (cart: Cart) : Cart =
     match cart.AppliedCoupon with
     | Some couponCode ->
-       
+        // If coupon is applied, recalculate with that coupon
         let subtotal = calculateSubtotal cart
         match applyCoupon couponCode with
         | Ok rule ->
@@ -100,51 +94,37 @@ let recalculateCart (cart: Cart) : Cart =
     | None ->
         calculateTotal cart None
 
+// Get savings amount
 let getSavings (cart: Cart) : decimal =
     cart.Discount
 
-
+// Get savings percentage
 let getSavingsPercentage (cart: Cart) : decimal =
     if cart.TotalBeforeDiscount > 0m then
         (cart.Discount / cart.TotalBeforeDiscount) * 100m
     else
         0m
 
-let displayPriceBreakdown (cart: Cart) : string =
-    let lines = [
-        "--- Price Breakdown ---"
-        sprintf "Subtotal:        $%.2f" cart.TotalBeforeDiscount
-        if cart.Discount > 0m then
-            match cart.AppliedCoupon with
-            | Some coupon ->
-                sprintf "Coupon (%s):    -$%.2f" coupon cart.Discount
-            | None ->
-                sprintf "Discount:       -$%.2f" cart.Discount
-        "------------------------"
-        sprintf "Final Total:     $%.2f" cart.FinalTotal
-        "========================"
-    ]
-    String.concat "\n" (lines |> List.filter (fun s -> s <> ""))
 
-
+// Calculate tax
 let calculateTax (amount: decimal) (taxRate: decimal) : decimal =
     amount * taxRate
 
-
+// Calculate shipping
 let calculateShipping (cart: Cart) (freeShippingThreshold: decimal) : decimal =
     if cart.FinalTotal >= freeShippingThreshold then
         0m
     else
         9.99m
 
-
+// Calculate grand total with tax and shipping
 let calculateGrandTotal (cart: Cart) (taxRate: decimal) (freeShippingThreshold: decimal) : decimal * decimal * decimal =
     let tax = calculateTax cart.FinalTotal taxRate
     let shipping = calculateShipping cart freeShippingThreshold
     let grandTotal = cart.FinalTotal + tax + shipping
     (tax, shipping, grandTotal)
 
-
+// Apply coupon to cart (stores coupon code)
 let applyCouponToCart (cart: Cart) (couponCode: string) : Result<Cart, string> =
     let subtotal = calculateSubtotal cart
     
@@ -162,66 +142,7 @@ let applyCouponToCart (cart: Cart) (couponCode: string) : Result<Cart, string> =
                     AppliedCoupon = Some (couponCode.ToUpper()) }
         | Error msg -> Error msg
 
+// Remove coupon from cart
 let removeCoupon (cart: Cart) : Cart =
     let recalculated = calculateTotal { cart with AppliedCoupon = None } None
     recalculated
-
-let qualifiesForFreeShipping (cart: Cart) (threshold: decimal) : bool =
-    cart.FinalTotal >= threshold
-
-let amountNeededForFreeShipping (cart: Cart) (threshold: decimal) : decimal =
-    if qualifiesForFreeShipping cart threshold then
-        0m
-    else
-        threshold - cart.FinalTotal
-
-
-let displayDetailedPriceSummary (cart: Cart) (taxRate: decimal) (freeShippingThreshold: decimal) : string =
-    let (tax, shipping, grandTotal) = calculateGrandTotal cart taxRate freeShippingThreshold
-    let lines = [
-        "================================"
-        "      PRICE SUMMARY"
-        "================================"
-        sprintf "Subtotal:          $%.2f" cart.TotalBeforeDiscount
-        if cart.Discount > 0m then
-            match cart.AppliedCoupon with
-            | Some coupon ->
-                sprintf "Coupon (%s):      -$%.2f (%.1f%% off)" coupon cart.Discount (getSavingsPercentage cart)
-            | None ->
-                sprintf "Discount:         -$%.2f (%.1f%% off)" cart.Discount (getSavingsPercentage cart)
-        "--------------------------------"
-        sprintf "Subtotal after discount: $%.2f" cart.FinalTotal
-        sprintf "Tax (%.1f%%):        $%.2f" (taxRate * 100m) tax
-        if shipping = 0m then
-            sprintf "Shipping:          FREE ✓"
-        else
-            sprintf "Shipping:          $%.2f" shipping
-        "================================"
-        sprintf "GRAND TOTAL:       $%.2f" grandTotal
-        "================================"
-    ]
-    String.concat "\n" (lines |> List.filter (fun s -> s <> ""))
-
-
-let getAverageItemPrice (cart: Cart) : decimal =
-    if isEmpty cart then
-        0m
-    else
-        cart.TotalBeforeDiscount / decimal (getItemCount cart)
-
-let getMostExpensiveItem (cart: Cart) : CartItem option =
-    if isEmpty cart then
-        None
-    else
-        cart.Items 
-        |> List.maxBy (fun item -> item.Product.Price)
-        |> Some
-
-
-let getCheapestItem (cart: Cart) : CartItem option =
-    if isEmpty cart then
-        None
-    else
-        cart.Items 
-        |> List.minBy (fun item -> item.Product.Price)
-        |> Some

@@ -1,0 +1,26 @@
+{
+  "OrderId": "50a5aa33-c847-498a-a99e-dc1fecbc4f5b",
+  "OrderDate": "2025-12-13T11:59:45.7804475+02:00",
+  "Items": [
+    {
+      "Product": {
+        "Id": 1,
+        "Name": "Laptop",
+        "Description": "High-performance laptop with 16GB RAM",
+        "Price": 999.99,
+        "Category": "Electronics",
+        "Stock": 10
+      },
+      "Quantity": 10
+    }
+  ],
+  "Subtotal": 9999.90,
+  "Discount": 2499.9750,
+  "Total": 7499.9250,
+  "CouponUsed": {
+    "Case": "Some",
+    "Fields": [
+      "SAVE25"
+    ]
+  }
+}

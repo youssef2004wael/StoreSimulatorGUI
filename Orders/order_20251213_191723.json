@@ -1,0 +1,26 @@
+{
+  "OrderId": "a5db6f9f-d592-4060-a19a-97d765f1dbb6",
+  "OrderDate": "2025-12-13T19:17:23.6195275+02:00",
+  "Items": [
+    {
+      "Product": {
+        "Id": 1,
+        "Name": "Laptop",
+        "Description": "High-performance laptop with 16GB RAM",
+        "Price": 999.99,
+        "Category": "Electronics",
+        "Stock": 10
+      },
+      "Quantity": 2
+    }
+  ],
+  "Subtotal": 1999.98,
+  "Discount": 100.0,
+  "Total": 1899.98,
+  "CouponUsed": {
+    "Case": "Some",
+    "Fields": [
+      "FLAT100"
+    ]
+  }
+}
