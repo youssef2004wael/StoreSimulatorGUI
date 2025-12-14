@@ -2,7 +2,6 @@ module StoreSimulatorGUI.Catalog
 
 open StoreSimulatorGUI.Models
 
-// Initialize product catalog as immutable Map
 let initializeCatalog () : Map<int, Product> =
     [
         { Id = 1; Name = "Laptop"; Description = "High-performance laptop with 16GB RAM"; Price = 999.99m; Category = "Electronics"; Stock = 10 }
@@ -24,19 +23,15 @@ let initializeCatalog () : Map<int, Product> =
     |> List.map (fun p -> (p.Id, p))
     |> Map.ofList
 
-// Get product by ID
 let getProduct (catalog: Map<int, Product>) (productId: int) : Product option =
     catalog.TryFind productId
 
-// Get all products as list
 let getAllProducts (catalog: Map<int, Product>) : Product list =
     catalog |> Map.toList |> List.map snd
 
-// Add new product to catalog (returns new catalog)
 let addProduct (catalog: Map<int, Product>) (product: Product) : Map<int, Product> =
     catalog.Add(product.Id, product)
 
-// Update product stock (immutable)
 let updateStock (catalog: Map<int, Product>) (productId: int) (newStock: int) : Map<int, Product> =
     match catalog.TryFind productId with
     | Some product -> 
@@ -44,7 +39,6 @@ let updateStock (catalog: Map<int, Product>) (productId: int) (newStock: int) : 
         catalog.Add(productId, updatedProduct)
     | None -> catalog
 
-// Decrease stock for multiple items (for checkout) - NEW FUNCTION
 let decreaseStockBatch (catalog: Map<int, Product>) (items: CartItem list) : Map<int, Product> =
     items
     |> List.fold (fun currentCatalog item ->
@@ -58,29 +52,24 @@ let decreaseStockBatch (catalog: Map<int, Product>) (items: CartItem list) : Map
 
 
 
-// Remove product from catalog
 let removeProduct (catalog: Map<int, Product>) (productId: int) : Map<int, Product> =
     catalog.Remove(productId)
 
 
 
 
-// Check if product exists
 let productExists (catalog: Map<int, Product>) (productId: int) : bool =
     catalog.ContainsKey productId
 
-// Check if product has sufficient stock
 let hasStock (catalog: Map<int, Product>) (productId: int) (quantity: int) : bool =
     match catalog.TryFind productId with
     | Some product -> product.Stock >= quantity
     | None -> false
 
-// Get low stock products (less than threshold)
 let getLowStockProducts (catalog: Map<int, Product>) (threshold: int) : Product list =
     getAllProducts catalog
     |> List.filter (fun p -> p.Stock > 0 && p.Stock < threshold)
 
-// Get out of stock products
 let getOutOfStockProducts (catalog: Map<int, Product>) : Product list =
     getAllProducts catalog
     |> List.filter (fun p -> p.Stock = 0)
